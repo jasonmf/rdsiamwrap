@@ -3,13 +3,13 @@ package rdsiamwrap
 
 import (
 	"database/sql/driver"
+	"fmt"
 	"net/url"
 	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -59,7 +59,7 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 		b := rdsutils.NewConnectionStringBuilder(d.Addr, d.Region, d.User, d.DBName, d.Creds)
 		connectStr, err := b.WithTCPFormat().WithParams(d.Params).Build()
 		if err != nil {
-			return nil, errors.Wrap(err, "building connection string")
+			return nil, fmt.Errorf("building connection string: %w", err)
 		}
 		d.lastDSN = connectStr
 		lifetime := DefaultTokenLifetime
